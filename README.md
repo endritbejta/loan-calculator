@@ -7,6 +7,9 @@ Live: https://endrits-loan-calculator.netlify.app/
 
 ## What it does
 
+- **Albanian and English** — AL is the default; the choice persists in
+  `localStorage`. Amounts stay in the local euro format (`239,42 €`) in both
+  languages, since that is the convention in Kosovo regardless of UI language.
 - **Side-by-side layout on desktop** — inputs left, results right, sized to fit
   without scrolling. Stacks to a single column below 820px.
 - **Live calculation** — results update as you type, no button press.
@@ -42,7 +45,13 @@ If the CBK ever exposes an API, the link block in `index.html` and
 
 Selecting **Variabile** flanks the monthly payment with what it becomes if the
 rate moves by 1, 1.5 or 2 percentage points — cuts on the left, rises on the
-right.
+right. Where the panel is too narrow for that, they stack underneath in two
+centred columns instead.
+
+That switch is a **container query on the results panel**, not a viewport
+media query. The panel is narrow both on a phone and inside the desktop
+two-column card, and a viewport breakpoint cannot tell those apart — which is
+exactly how the flanks ended up overlapping the number on tablets.
 
 Both directions are shown on purpose. An earlier version listed only rises,
 below the payment and with the extra *total* cost alongside; sitting under the

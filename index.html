@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sq">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loan Calculator · Kosovo</title>
-    <meta name="description" content="Estimate monthly loan payments and compare them against real bank offers published by the Central Bank of Kosovo.">
+    <title>Kalkulatori i Kredisë · Kosovë</title>
+    <meta name="description" content="Llogarit këstin mujor të kredisë dhe krahaso ofertat reale të bankave në platformën e Bankës Qendrore të Kosovës.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -14,9 +14,17 @@
     <div class="background-glob"></div>
 
     <div class="container">
+        <div class="lang-bar">
+            <div class="lang-switch" id="lang-switch" role="radiogroup" aria-label="Gjuha / Language">
+                <button type="button" class="seg active" data-lang="sq" role="radio" aria-checked="true">AL</button>
+                <span class="lang-sep" aria-hidden="true">·</span>
+                <button type="button" class="seg" data-lang="en" role="radio" aria-checked="false">EN</button>
+            </div>
+        </div>
+
         <header>
-            <h1>Loan Calculator</h1>
-            <p>Estimate your payments, then compare real bank offers</p>
+            <h1 data-i18n="title">Kalkulatori i Kredisë</h1>
+            <p data-i18n="subtitle">Llogarit këstet, pastaj krahaso ofertat reale të bankave</p>
         </header>
 
         <div class="calculator-card">
@@ -24,18 +32,18 @@
             <!-- ── Inputs ─────────────────────────────────────────── -->
             <section class="panel panel-inputs">
                 <div class="input-group">
-                    <label for="loan-type">Loan Type</label>
+                    <label for="loan-type" data-i18n="loanType">Lloji i Kredisë</label>
                     <select id="loan-type">
-                        <option value="personale">Kredi Personale — Personal</option>
-                        <option value="konsumuese">Kredi Konsumuese — Consumer</option>
-                        <option value="banesore">Kredi Banesore — Mortgage</option>
-                        <option value="automjeti">Kredi për Automjet — Car</option>
-                        <option value="biznes">Kredi për Biznes — Business</option>
+                        <option value="personale"  data-i18n="optPersonale">Kredi Personale</option>
+                        <option value="konsumuese" data-i18n="optKonsumuese">Kredi Konsumuese</option>
+                        <option value="banesore"   data-i18n="optBanesore">Kredi Banesore</option>
+                        <option value="automjeti"  data-i18n="optAutomjeti">Kredi për Automjet</option>
+                        <option value="biznes"     data-i18n="optBiznes">Kredi për Biznes</option>
                     </select>
                 </div>
 
                 <div class="input-group">
-                    <label for="amount">Loan Amount</label>
+                    <label for="amount" data-i18n="amount">Shuma e Kredisë</label>
                     <div class="input-wrapper">
                         <span class="affix">€</span>
                         <input type="number" id="amount" value="10000" min="0" step="500" inputmode="decimal">
@@ -44,7 +52,7 @@
 
                 <div class="row">
                     <div class="input-group">
-                        <label for="rate">Interest Rate</label>
+                        <label for="rate" data-i18n="rate">Norma e Interesit</label>
                         <div class="input-wrapper">
                             <span class="affix">%</span>
                             <input type="number" id="rate" value="6.99" min="0" step="0.1" inputmode="decimal">
@@ -52,39 +60,37 @@
                     </div>
 
                     <div class="input-group">
-                        <label for="months">Term</label>
+                        <label for="months" data-i18n="term">Afati</label>
                         <div class="input-wrapper">
                             <input type="number" id="months" value="48" min="1" step="1" inputmode="numeric">
-                            <span class="affix affix-right">mo</span>
+                            <span class="affix affix-right" data-i18n="mo">muaj</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="input-group">
-                    <label>Rate Type</label>
-                    <div class="segmented" id="rate-type" role="radiogroup" aria-label="Rate type">
-                        <button type="button" class="seg active" data-value="fikse" role="radio" aria-checked="true">Fikse · Fixed</button>
-                        <button type="button" class="seg" data-value="variabile" role="radio" aria-checked="false">Variabile</button>
+                    <label data-i18n="rateType">Lloji i Normës</label>
+                    <div class="segmented" id="rate-type" role="radiogroup" aria-label="Lloji i normës">
+                        <button type="button" class="seg active" data-value="fikse" role="radio" aria-checked="true" data-i18n="fixed">Fikse</button>
+                        <button type="button" class="seg" data-value="variabile" role="radio" aria-checked="false" data-i18n="variable">Variabile</button>
                     </div>
                 </div>
 
-                <p id="error-message" class="error-message hidden" role="alert">
-                    Enter a positive amount, a rate of 0 or more, and a term of at least one month.
-                </p>
+                <p id="error-message" class="error-message hidden" role="alert" data-i18n="error">Shëno një shumë pozitive, normë 0 ose më shumë, dhe afat së paku një muaj.</p>
 
-                <button type="button" id="schedule-btn" class="ghost-btn">View amortization schedule</button>
+                <button type="button" id="schedule-btn" class="ghost-btn" data-i18n="viewSchedule">Shiko planin e amortizimit</button>
             </section>
 
             <!-- ── Results ────────────────────────────────────────── -->
             <section class="panel panel-results" aria-live="polite">
                 <div class="headline">
-                    <span class="label">Monthly Payment</span>
+                    <span class="label" data-i18n="monthly">Kësti Mujor</span>
                     <div class="headline-row">
                         <div class="flank" id="flank-down" aria-hidden="true"></div>
                         <span class="value" id="monthly-payment">€0.00</span>
                         <div class="flank" id="flank-up" aria-hidden="true"></div>
                     </div>
-                    <span class="flank-note hidden" id="flank-note">if the rate moves · scenario, not a forecast</span>
+                    <span class="flank-note hidden" id="flank-note" data-i18n="flankNote">Normat variabile ndjekin EURIBOR-in — kësti lëviz bashkë me të. Skenarë, jo parashikim.</span>
                 </div>
 
                 <div class="split-bar" aria-hidden="true">
@@ -92,17 +98,17 @@
                     <div class="split-interest" id="split-interest"></div>
                 </div>
                 <div class="split-legend">
-                    <span><i class="dot dot-principal"></i>Principal</span>
-                    <span><i class="dot dot-interest"></i>Interest</span>
+                    <span><i class="dot dot-principal"></i><span data-i18n="principal">Principali</span></span>
+                    <span><i class="dot dot-interest"></i><span data-i18n="interest">Interesi</span></span>
                 </div>
 
                 <div class="result-details">
                     <div class="detail-item">
-                        <span class="label">Total Payment</span>
+                        <span class="label" data-i18n="totalPayment">Pagesa Totale</span>
                         <span class="value" id="total-payment">€0.00</span>
                     </div>
                     <div class="detail-item">
-                        <span class="label">Total Interest</span>
+                        <span class="label" data-i18n="totalInterest">Interesi Total</span>
                         <span class="value" id="total-interest">€0.00</span>
                     </div>
                 </div>
@@ -111,19 +117,19 @@
                      out instead of showing numbers we cannot keep honest. -->
                 <div class="bqk">
                     <a class="bqk-link" href="https://krahaso.bqk-kos.org/loans" target="_blank" rel="noopener noreferrer">
-                        Compare real bank offers at BQK
+                        <span data-i18n="compare">Krahaso ofertat e bankave në BQK</span>
                         <span class="arrow" aria-hidden="true">→</span>
                     </a>
                     <p class="bqk-hint">
-                        Official comparison platform of the Central Bank of Kosovo.
-                        Filter for <strong id="bqk-filters">Kredi Personale · deri €10,000 · normë fikse</strong>.
+                        <span data-i18n="bqkHint">Platforma zyrtare krahasuese e Bankës Qendrore të Kosovës. Filtro për</span>
+                        <strong id="bqk-filters">Kredi Personale · deri €10,000 · normë fikse</strong>.
                     </p>
                 </div>
             </section>
         </div>
 
         <footer>
-            <p>Estimates only — banks round differently and may add fees. Always confirm with the lender.</p>
+            <p data-i18n="disclaimer">Vetëm vlerësime — bankat rrumbullakosin ndryshe dhe mund të shtojnë tarifa. Gjithmonë konfirmo me bankën.</p>
         </footer>
     </div>
 
@@ -132,25 +138,25 @@
         <div class="modal-backdrop" data-close></div>
         <div class="modal-card">
             <header class="modal-head">
-                <h2 id="schedule-title">Amortization Schedule</h2>
-                <button type="button" class="close-btn" data-close aria-label="Close">×</button>
+                <h2 id="schedule-title" data-i18n="scheduleTitle">Plani i Amortizimit</h2>
+                <button type="button" class="close-btn" data-close aria-label="Mbyll">×</button>
             </header>
             <div class="table-scroll">
                 <table id="schedule-table">
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Payment</th>
-                            <th>Principal</th>
-                            <th>Interest</th>
-                            <th>Balance</th>
+                            <th data-i18n="thPayment">Kësti</th>
+                            <th data-i18n="thPrincipal">Principali</th>
+                            <th data-i18n="thInterest">Interesi</th>
+                            <th data-i18n="thBalance">Bilanci</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
             </div>
             <footer class="modal-foot">
-                <button type="button" id="csv-btn" class="ghost-btn">Download CSV</button>
+                <button type="button" id="csv-btn" class="ghost-btn" data-i18n="downloadCsv">Shkarko CSV</button>
             </footer>
         </div>
     </div>

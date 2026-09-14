@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const monthsInput = document.getElementById("months");
   const loanTypeSelect = document.getElementById("loan-type");
   const rateTypeGroup = document.getElementById("rate-type");
+  const langSwitch = document.getElementById("lang-switch");
   const errorEl = document.getElementById("error-message");
 
   const monthlyPaymentEl = document.getElementById("monthly-payment");
@@ -21,32 +22,117 @@ document.addEventListener("DOMContentLoaded", () => {
   const scheduleBody = document.querySelector("#schedule-table tbody");
   const csvBtn = document.getElementById("csv-btn");
 
+  /* ── Strings ───────────────────────────────────────────────── */
+
+  const STRINGS = {
+    sq: {
+      title: "Kalkulatori i Kredisë",
+      subtitle: "Llogarit këstet, pastaj krahaso ofertat reale të bankave",
+      loanType: "Lloji i Kredisë",
+      optPersonale: "Kredi Personale",
+      optKonsumuese: "Kredi Konsumuese",
+      optBanesore: "Kredi Banesore",
+      optAutomjeti: "Kredi për Automjet",
+      optBiznes: "Kredi për Biznes",
+      amount: "Shuma e Kredisë",
+      rate: "Norma e Interesit",
+      term: "Afati",
+      mo: "muaj",
+      rateType: "Lloji i Normës",
+      fixed: "Fikse",
+      variable: "Variabile",
+      error: "Shëno një shumë pozitive, normë 0 ose më shumë, dhe afat së paku një muaj.",
+      viewSchedule: "Shiko planin e amortizimit",
+      monthly: "Kësti Mujor",
+      flankNote: "Normat variabile ndjekin EURIBOR-in — kësti lëviz bashkë me të. Skenarë, jo parashikim.",
+      principal: "Principali",
+      interest: "Interesi",
+      totalPayment: "Pagesa Totale",
+      totalInterest: "Interesi Total",
+      compare: "Krahaso ofertat e bankave në BQK",
+      bqkHint: "Platforma zyrtare krahasuese e Bankës Qendrore të Kosovës. Filtro për",
+      disclaimer: "Vetëm vlerësime — bankat rrumbullakosin ndryshe dhe mund të shtojnë tarifa. Gjithmonë konfirmo me bankën.",
+      scheduleTitle: "Plani i Amortizimit",
+      thPayment: "Kësti",
+      thPrincipal: "Principali",
+      thInterest: "Interesi",
+      thBalance: "Bilanci",
+      downloadCsv: "Shkarko CSV",
+      bandOver: "mbi €10,000",
+      bandUnder: "deri €10,000",
+      normFixed: "normë fikse",
+      normVariable: "normë variabile",
+    },
+    en: {
+      title: "Loan Calculator",
+      subtitle: "Estimate your payments, then compare real bank offers",
+      loanType: "Loan Type",
+      optPersonale: "Kredi Personale — Personal",
+      optKonsumuese: "Kredi Konsumuese — Consumer",
+      optBanesore: "Kredi Banesore — Mortgage",
+      optAutomjeti: "Kredi për Automjet — Car",
+      optBiznes: "Kredi për Biznes — Business",
+      amount: "Loan Amount",
+      rate: "Interest Rate",
+      term: "Term",
+      mo: "mo",
+      rateType: "Rate Type",
+      fixed: "Fixed",
+      variable: "Variable",
+      error: "Enter a positive amount, a rate of 0 or more, and a term of at least one month.",
+      viewSchedule: "View amortization schedule",
+      monthly: "Monthly Payment",
+      flankNote: "Variable rates track EURIBOR — the payment moves with it. Scenarios, not a forecast.",
+      principal: "Principal",
+      interest: "Interest",
+      totalPayment: "Total Payment",
+      totalInterest: "Total Interest",
+      compare: "Compare real bank offers at BQK",
+      bqkHint: "Official comparison platform of the Central Bank of Kosovo. Filter for",
+      disclaimer: "Estimates only — banks round differently and may add fees. Always confirm with the lender.",
+      scheduleTitle: "Amortization Schedule",
+      thPayment: "Payment",
+      thPrincipal: "Principal",
+      thInterest: "Interest",
+      thBalance: "Balance",
+      downloadCsv: "Download CSV",
+      bandOver: "over €10,000",
+      bandUnder: "up to €10,000",
+      normFixed: "fixed rate",
+      normVariable: "variable rate",
+    },
+  };
+
+  // Product names stay Albanian in both languages — they are what the BQK
+  // platform actually labels these loans, so translating them would stop the
+  // filter hint matching what you see over there.
+  const PRESETS = {
+    personale:  { label: "Kredi Personale",    amount: 10000, months: 48 },
+    konsumuese: { label: "Kredi Konsumuese",   amount: 5000,  months: 24 },
+    banesore:   { label: "Kredi Banesore",     amount: 80000, months: 240 },
+    automjeti:  { label: "Kredi për Automjet", amount: 15000, months: 60 },
+    biznes:     { label: "Kredi për Biznes",   amount: 30000, months: 60 },
+  };
+
+  // Rate moves in percentage points, shown in both directions: a variable rate
+  // can fall as easily as rise, and showing only rises reads as a warning
+  // rather than as the range it actually is.
+  const SHOCKS = [1, 1.5, 2];
+
+  let lang = localStorage.getItem("lang") === "en" ? "en" : "sq";
+  let rateType = "fikse";
+  let schedule = [];
+
+  const t = (key) => STRINGS[lang][key];
+
+  // Kosovo uses the euro with comma decimals whichever language the interface
+  // is in, so the number format stays put when the language changes.
   const euro = new Intl.NumberFormat("de-DE", {
     style: "currency",
     currency: "EUR",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-
-  // Typical shape of each product, used only to seed the form. Rates are
-  // deliberately left alone — the BQK platform is the source of truth for
-  // those, and inventing one here would read as a claim about the market.
-  const PRESETS = {
-    personale:  { label: "Kredi Personale",     amount: 10000, months: 48 },
-    konsumuese: { label: "Kredi Konsumuese",    amount: 5000,  months: 24 },
-    banesore:   { label: "Kredi Banesore",      amount: 80000, months: 240 },
-    automjeti:  { label: "Kredi për Automjet",  amount: 15000, months: 60 },
-    biznes:     { label: "Kredi për Biznes",    amount: 30000, months: 60 },
-  };
-
-  // Rate moves in percentage points, shown in both directions: a variable rate
-  // can fall as easily as rise, and showing only rises reads as a warning
-  // rather than as the range it actually is. Scenarios, not a forecast —
-  // EURIBOR's path is not predictable to any useful accuracy.
-  const SHOCKS = [1, 1.5, 2];
-
-  let rateType = "fikse";
-  let schedule = [];
 
   /* ── Maths ─────────────────────────────────────────────────── */
 
@@ -118,8 +204,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const updateBqkHint = () => {
     const { amount } = readInputs();
     const label = PRESETS[loanTypeSelect.value].label;
-    const band = !isNaN(amount) && amount > 10000 ? "mbi €10,000" : "deri €10,000";
-    const norm = rateType === "fikse" ? "normë fikse" : "normë variabile";
+    const band = !isNaN(amount) && amount > 10000 ? t("bandOver") : t("bandUnder");
+    const norm = rateType === "fikse" ? t("normFixed") : t("normVariable");
     bqkFiltersEl.textContent = `${label} · ${band} · ${norm}`;
   };
 
@@ -140,8 +226,8 @@ document.addEventListener("DOMContentLoaded", () => {
     SHOCKS.forEach((shock) => {
       // A rate cannot go below zero, so deep cuts flatten rather than invert.
       const down = Math.max(0, rate - shock);
-      flankDownEl.appendChild(row(`−${shock}`, payment(amount, down, months)));
-      flankUpEl.appendChild(row(`+${shock}`, payment(amount, rate + shock, months)));
+      flankDownEl.appendChild(row(`−${shock} pt`, payment(amount, down, months)));
+      flankUpEl.appendChild(row(`+${shock} pt`, payment(amount, rate + shock, months)));
     });
   };
 
@@ -166,6 +252,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     renderFlanks(amount, rate, months);
     schedule = buildSchedule(amount, rate, months, monthly);
+  };
+
+  /* ── Language ──────────────────────────────────────────────── */
+
+  const applyLanguage = () => {
+    document.documentElement.lang = lang;
+    document.title = `${t("title")} · ${lang === "sq" ? "Kosovë" : "Kosovo"}`;
+
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+      const value = STRINGS[lang][el.dataset.i18n];
+      if (value !== undefined) el.textContent = value;
+    });
+
+    langSwitch.querySelectorAll(".seg").forEach((el) => {
+      const on = el.dataset.lang === lang;
+      el.classList.toggle("active", on);
+      el.setAttribute("aria-checked", String(on));
+    });
+
+    recalculate();
   };
 
   /* ── Schedule modal ────────────────────────────────────────── */
@@ -196,7 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeModal = () => scheduleModal.classList.add("hidden");
 
   const downloadCsv = () => {
-    const header = "Month,Payment,Principal,Interest,Balance";
+    const header = ["#", t("thPayment"), t("thPrincipal"), t("thInterest"), t("thBalance")];
     const body = schedule
       .map((r) =>
         [r.n, r.paid, r.principal, r.interest, r.balance]
@@ -205,7 +311,9 @@ document.addEventListener("DOMContentLoaded", () => {
       )
       .join("\n");
 
-    const blob = new Blob([`${header}\n${body}`], { type: "text/csv;charset=utf-8" });
+    const blob = new Blob([`${header.join(",")}\n${body}`], {
+      type: "text/csv;charset=utf-8",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -239,6 +347,14 @@ document.addEventListener("DOMContentLoaded", () => {
     recalculate();
   });
 
+  langSwitch.addEventListener("click", (e) => {
+    const btn = e.target.closest(".seg");
+    if (!btn || btn.dataset.lang === lang) return;
+    lang = btn.dataset.lang;
+    localStorage.setItem("lang", lang);
+    applyLanguage();
+  });
+
   scheduleBtn.addEventListener("click", openModal);
   csvBtn.addEventListener("click", downloadCsv);
   scheduleModal.addEventListener("click", (e) => {
@@ -248,5 +364,5 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Escape") closeModal();
   });
 
-  recalculate();
+  applyLanguage();
 });

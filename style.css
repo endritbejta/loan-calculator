@@ -52,7 +52,7 @@ body {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 940px;
+  max-width: 1060px;
   padding: 1.5rem;
 }
 
@@ -98,6 +98,56 @@ header p {
   flex-direction: column;
   padding-left: 2.25rem;
   border-left: 1px solid var(--card-border);
+  /* The flanks key off this panel's real width, not the viewport — the panel
+     is narrow on a phone AND in the desktop two-column card, and viewport
+     breakpoints can't tell those apart. */
+  container-type: inline-size;
+  container-name: results;
+}
+
+.lang-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.3rem;
+}
+
+/* Deliberately not a segmented pill — this is a rarely-touched preference and
+   shouldn't compete with the inputs for attention. */
+.lang-switch {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.lang-switch .seg {
+  background: none;
+  border: none;
+  border-radius: 5px;
+  padding: 0.1rem 0.28rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  opacity: 0.55;
+  cursor: pointer;
+}
+
+.lang-switch .seg:hover {
+  opacity: 1;
+  color: var(--text-main);
+  background: none;
+}
+
+.lang-switch .seg.active {
+  background: none;
+  color: var(--accent);
+  opacity: 1;
+}
+
+.lang-sep {
+  color: var(--text-muted);
+  opacity: 0.3;
+  font-size: 0.65rem;
 }
 
 /* ── Inputs ─────────────────────────────────────────────────── */
@@ -255,12 +305,32 @@ input.input-error { border-color: var(--danger); }
    so toggling rate type doesn't shift the layout. */
 .headline-row {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "value value"
+    "down  up";
   align-items: center;
-  gap: 0.6rem;
-  /* Reserve the flanks' height so toggling rate type doesn't nudge the
-     number up and down. */
-  min-height: 3.5rem;
+  justify-items: center;
+  gap: 0.45rem 0.8rem;
+}
+
+.headline-row .value { grid-area: value; }
+#flank-down { grid-area: down; }
+#flank-up { grid-area: up; }
+
+/* Only sit beside the number once the panel can actually fit them. */
+@container results (min-width: 400px) {
+  .headline-row {
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-areas: "down value up";
+    gap: 0.6rem;
+    /* Reserve the flanks' height so toggling rate type doesn't nudge the
+       number up and down. */
+    min-height: 3.5rem;
+  }
+
+  #flank-down { justify-self: start; align-items: flex-start; }
+  #flank-up { justify-self: end; align-items: flex-end; }
 }
 
 .flank {
@@ -271,9 +341,6 @@ input.input-error { border-color: var(--danger); }
      so the side columns end up unequal and the number drifts off centre. */
   min-width: 0;
 }
-
-#flank-down { align-items: flex-start; }
-#flank-up   { align-items: flex-end; }
 
 .flank-row {
   display: flex;
