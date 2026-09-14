@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const splitPrincipalEl = document.getElementById("split-principal");
   const splitInterestEl = document.getElementById("split-interest");
   const bqkFiltersEl = document.getElementById("bqk-filters");
+  const rateRiskEl = document.getElementById("rate-risk");
+  const riskGridEl = document.getElementById("risk-grid");
 
   const scheduleBtn = document.getElementById("schedule-btn");
   const scheduleModal = document.getElementById("schedule-modal");
@@ -35,6 +37,11 @@ document.addEventListener("DOMContentLoaded", () => {
     automjeti:  { label: "Kredi për Automjet",  amount: 15000, months: 60 },
     biznes:     { label: "Kredi për Biznes",    amount: 30000, months: 60 },
   };
+
+  // Rate shocks in percentage points. These are illustrative scenarios, not a
+  // forecast: EURIBOR's future path is not predictable, and a tool that implied
+  // otherwise would be worse than one that just shows the exposure.
+  const SHOCKS = [1, 2, 3];
 
   let rateType = "fikse";
   let schedule = [];
@@ -114,6 +121,26 @@ document.addEventListener("DOMContentLoaded", () => {
     bqkFiltersEl.textContent = `${label} · ${band} · ${norm}`;
   };
 
+  const renderRateRisk = (amount, rate, months, baseMonthly) => {
+    const visible = rateType === "variabile";
+    rateRiskEl.classList.toggle("hidden", !visible);
+    if (!visible) return;
+
+    riskGridEl.innerHTML = "";
+    SHOCKS.forEach((shock) => {
+      const monthly = payment(amount, rate + shock, months);
+      const extra = (monthly - baseMonthly) * months;
+
+      const cell = document.createElement("div");
+      cell.className = "risk-cell";
+      cell.innerHTML =
+        `<span class="shock">+${shock} pt</span>` +
+        `<span class="pay">${euro.format(monthly)}</span>` +
+        `<span class="delta">+${euro.format(extra)} total</span>`;
+      riskGridEl.appendChild(cell);
+    });
+  };
+
   const recalculate = () => {
     updateBqkHint();
 
@@ -133,6 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
     splitPrincipalEl.style.width = `${100 - interestShare}%`;
     splitInterestEl.style.width = `${interestShare}%`;
 
+    renderRateRisk(amount, rate, months, monthly);
     schedule = buildSchedule(amount, rate, months, monthly);
   };
 
@@ -204,7 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
       el.classList.toggle("active", on);
       el.setAttribute("aria-checked", String(on));
     });
-    updateBqkHint();
+    recalculate();
   });
 
   scheduleBtn.addEventListener("click", openModal);

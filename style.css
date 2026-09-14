@@ -296,7 +296,7 @@ input.input-error { border-color: var(--danger); }
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
-  margin: 1.25rem 0;
+  margin: 1rem 0;
 }
 
 .detail-item {
@@ -320,11 +320,68 @@ input.input-error { border-color: var(--danger); }
   font-variant-numeric: tabular-nums;
 }
 
+/* ── Variable rate stress strip ─────────────────────────────── */
+
+.rate-risk {
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  background: rgba(245, 158, 11, 0.07);
+  border-radius: 12px;
+  padding: 0.7rem 0.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.risk-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.55rem;
+  font-size: 0.78rem;
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.risk-note {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.risk-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.4rem;
+}
+
+.risk-cell { text-align: center; }
+
+.risk-cell .shock {
+  display: block;
+  font-size: 0.68rem;
+  color: var(--interest);
+  margin-bottom: 0.1rem;
+}
+
+.risk-cell .pay {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.risk-cell .delta {
+  display: block;
+  font-size: 0.66rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
 /* ── BQK link ───────────────────────────────────────────────── */
 
 .bqk {
   margin-top: auto;
-  padding-top: 1.25rem;
+  padding-top: 1rem;
   border-top: 1px solid var(--card-border);
 }
 

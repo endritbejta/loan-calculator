@@ -102,6 +102,16 @@
                     </div>
                 </div>
 
+                <!-- Only shown for variable rates. Deliberately scenarios rather
+                     than a forecast — see the note in the README. -->
+                <div class="rate-risk hidden" id="rate-risk">
+                    <div class="risk-head">
+                        <span>If the rate rises</span>
+                        <span class="risk-note">scenario, not a forecast</span>
+                    </div>
+                    <div class="risk-grid" id="risk-grid"></div>
+                </div>
+
                 <!-- Rates are not fetched: BQK blocks automated access, so we link
                      out instead of showing numbers we cannot keep honest. -->
                 <div class="bqk">

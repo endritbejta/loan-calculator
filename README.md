@@ -38,6 +38,22 @@ this app claims to be live bank data, because it isn't.
 If the CBK ever exposes an API, the link block in `index.html` and
 `updateBqkHint()` in `script.js` are the only places that would need to change.
 
+## Variable rates: scenarios, not forecasts
+
+Selecting **Variabile** shows what the payment becomes if the rate rises by 1,
+2 or 3 percentage points, with the extra total cost alongside.
+
+These are deliberately scenarios rather than a prediction. A variable rate in
+the eurozone tracks EURIBOR plus a fixed bank margin, and EURIBOR's future
+path is not forecastable with any useful accuracy — forward curves price in
+market expectations, but they are biased predictors, and a random walk beats
+most rate forecasts over the horizons that matter for a loan. A tool that
+printed "your rate will be X in 2028" would be inventing precision it does
+not have.
+
+What *is* knowable is the exposure: how much the payment moves per point of
+rate rise. That is arithmetic, not prediction, and it is what the strip shows.
+
 ## Interest rate presets
 
 Loan type presets set **amount and term only** — never the interest rate.
