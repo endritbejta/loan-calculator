@@ -455,14 +455,15 @@ input.input-error { border-color: var(--danger); }
 /* Reads as a link, not a button — it leaves the page, and a filled control
    here competed with the primary result for attention. */
 .bqk-link {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  padding: 0.1rem 0 0.3rem;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.15rem 0 0.6rem;
   background: none;
   border: none;
-  border-bottom: 1px solid rgba(129, 140, 248, 0.45);
+  border-bottom: 1px solid rgba(129, 140, 248, 0.4);
   border-radius: 0;
   color: var(--accent);
   text-decoration: none;
