@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // deliberately left alone — the BQK platform is the source of truth for
   // those, and inventing one here would read as a claim about the market.
   const PRESETS = {
-    personale:  { label: "Kredi Personale",     amount: 11000, months: 36 },
+    personale:  { label: "Kredi Personale",     amount: 10000, months: 48 },
     konsumuese: { label: "Kredi Konsumuese",    amount: 5000,  months: 24 },
     banesore:   { label: "Kredi Banesore",      amount: 80000, months: 240 },
     automjeti:  { label: "Kredi për Automjet",  amount: 15000, months: 60 },
