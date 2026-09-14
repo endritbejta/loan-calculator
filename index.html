@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Calculator · Kosovo</title>
+    <meta name="description" content="Estimate monthly loan payments and compare them against real bank offers published by the Central Bank of Kosovo.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-glob"></div>
+
+    <div class="container">
+        <header>
+            <h1>Loan Calculator</h1>
+            <p>Estimate your payments, then compare real bank offers</p>
+        </header>
+
+        <div class="calculator-card">
+
+            <!-- ── Inputs ─────────────────────────────────────────── -->
+            <section class="panel panel-inputs">
+                <div class="input-group">
+                    <label for="loan-type">Loan Type</label>
+                    <select id="loan-type">
+                        <option value="personale">Kredi Personale — Personal</option>
+                        <option value="konsumuese">Kredi Konsumuese — Consumer</option>
+                        <option value="banesore">Kredi Banesore — Mortgage</option>
+                        <option value="automjeti">Kredi për Automjet — Car</option>
+                        <option value="biznes">Kredi për Biznes — Business</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="amount">Loan Amount</label>
+                    <div class="input-wrapper">
+                        <span class="affix">€</span>
+                        <input type="number" id="amount" value="11000" min="0" step="500" inputmode="decimal">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-group">
+                        <label for="rate">Interest Rate</label>
+                        <div class="input-wrapper">
+                            <span class="affix">%</span>
+                            <input type="number" id="rate" value="12" min="0" step="0.1" inputmode="decimal">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="months">Term</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="months" value="35" min="1" step="1" inputmode="numeric">
+                            <span class="affix affix-right">mo</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Rate Type</label>
+                    <div class="segmented" id="rate-type" role="radiogroup" aria-label="Rate type">
+                        <button type="button" class="seg active" data-value="fikse" role="radio" aria-checked="true">Fikse · Fixed</button>
+                        <button type="button" class="seg" data-value="variabile" role="radio" aria-checked="false">Variabile</button>
+                    </div>
+                </div>
+
+                <p id="error-message" class="error-message hidden" role="alert">
+                    Enter a positive amount, a rate of 0 or more, and a term of at least one month.
+                </p>
+
+                <button type="button" id="schedule-btn" class="ghost-btn">View amortization schedule</button>
+            </section>
+
+            <!-- ── Results ────────────────────────────────────────── -->
+            <section class="panel panel-results" aria-live="polite">
+                <div class="headline">
+                    <span class="label">Monthly Payment</span>
+                    <span class="value" id="monthly-payment">€0.00</span>
+                </div>
+
+                <div class="split-bar" aria-hidden="true">
+                    <div class="split-principal" id="split-principal"></div>
+                    <div class="split-interest" id="split-interest"></div>
+                </div>
+                <div class="split-legend">
+                    <span><i class="dot dot-principal"></i>Principal</span>
+                    <span><i class="dot dot-interest"></i>Interest</span>
+                </div>
+
+                <div class="result-details">
+                    <div class="detail-item">
+                        <span class="label">Total Payment</span>
+                        <span class="value" id="total-payment">€0.00</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Total Interest</span>
+                        <span class="value" id="total-interest">€0.00</span>
+                    </div>
+                </div>
+
+                <!-- Rates are not fetched: BQK blocks automated access, so we link
+                     out instead of showing numbers we cannot keep honest. -->
+                <div class="bqk">
+                    <a class="bqk-link" href="https://krahaso.bqk-kos.org/loans" target="_blank" rel="noopener noreferrer">
+                        Compare real bank offers at BQK
+                        <span class="arrow" aria-hidden="true">→</span>
+                    </a>
+                    <p class="bqk-hint">
+                        Official comparison platform of the Central Bank of Kosovo.
+                        Filter for <strong id="bqk-filters">Kredi Personale · mbi €10,000 · normë fikse</strong>.
+                    </p>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p>Estimates only — banks round differently and may add fees. Always confirm with the lender.</p>
+        </footer>
+    </div>
+
+    <!-- ── Amortization schedule ──────────────────────────────── -->
+    <div class="modal hidden" id="schedule-modal" role="dialog" aria-modal="true" aria-labelledby="schedule-title">
+        <div class="modal-backdrop" data-close></div>
+        <div class="modal-card">
+            <header class="modal-head">
+                <h2 id="schedule-title">Amortization Schedule</h2>
+                <button type="button" class="close-btn" data-close aria-label="Close">×</button>
+            </header>
+            <div class="table-scroll">
+                <table id="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Payment</th>
+                            <th>Principal</th>
+                            <th>Interest</th>
+                            <th>Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <footer class="modal-foot">
+                <button type="button" id="csv-btn" class="ghost-btn">Download CSV</button>
+            </footer>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
