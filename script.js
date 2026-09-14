@@ -375,14 +375,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // while the keyboard is covering it — which is the exact moment the readout
   // is needed.
   const vv = window.visualViewport;
-  const headlineEl = document.querySelector(".headline");
 
   const resultOnScreen = () => {
-    const r = headlineEl.getBoundingClientRect();
-    const top = vv ? vv.offsetTop : 0;
+    const r = monthlyPaymentEl.getBoundingClientRect();
+    // The bar is fixed over the top of the page, so the readable area starts
+    // below it — otherwise the figure could sit behind the bar and still
+    // count as visible.
+    const top = (vv ? vv.offsetTop : 0) + liveBar.offsetHeight;
     const bottom = vv ? vv.offsetTop + vv.height : window.innerHeight;
-    const shown = Math.min(r.bottom, bottom) - Math.max(r.top, top);
-    return shown > r.height * 0.5; // a sliver doesn't count as visible
+    // The whole figure has to be readable, not merely peeking into view.
+    return r.top >= top - 1 && r.bottom <= bottom + 1;
   };
 
   syncLiveBar = () => {

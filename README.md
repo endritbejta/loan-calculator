@@ -73,10 +73,15 @@ while the keyboard is sitting on top of it — precisely when you are typing and
 need the readout.
 
 So visibility is computed from `window.visualViewport` (its `offsetTop` and
-`height`) against the result's rect, recomputed on scroll, resize, visual
-viewport changes, and input focus/blur. A result counts as visible only when
-more than half of it is inside the visible area; a sliver peeking out doesn't
-count.
+`height`) against the payment figure's rect, recomputed on scroll, resize,
+visual viewport changes, and input focus/blur.
+
+The bar stays up until the figure is **entirely** readable — a partially
+cut-off number still keeps it visible. The readable area also starts below the
+bar's own height, so the figure can't slide under the bar and still count as
+on screen. The bar is parked off-screen with a transform rather than
+`display: none`, so its height is constant whether shown or hidden and the two
+can't oscillate.
 
 ## Variable rates: scenarios, not forecasts
 
