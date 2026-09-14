@@ -294,7 +294,8 @@ input.input-error { border-color: var(--danger); }
 .bqk-link:focus-visible,
 .close-btn:focus-visible {
   outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 /* ── Results ────────────────────────────────────────────────── */
@@ -451,25 +452,28 @@ input.input-error { border-color: var(--danger); }
   border-top: 1px solid var(--card-border);
 }
 
+/* Reads as a link, not a button — it leaves the page, and a filled control
+   here competed with the primary result for attention. */
 .bqk-link {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  padding: 0.8rem 1rem;
-  background: rgba(99, 102, 241, 0.12);
-  border: 1px solid rgba(129, 140, 248, 0.35);
-  border-radius: 12px;
-  color: var(--text-main);
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.1rem 0 0.3rem;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(129, 140, 248, 0.45);
+  border-radius: 0;
+  color: var(--accent);
   text-decoration: none;
   font-weight: 500;
   font-size: 0.92rem;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 .bqk-link:hover {
-  background: rgba(99, 102, 241, 0.22);
-  border-color: var(--accent);
+  color: var(--text-main);
+  border-bottom-color: var(--text-main);
 }
 
 .bqk-link .arrow { transition: transform 0.2s ease; }
