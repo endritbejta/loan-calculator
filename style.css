@@ -56,6 +56,57 @@ body {
   padding: 1.5rem;
 }
 
+/* ── Live readout (stacked layout only) ─────────────────────── */
+
+.live-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 1.25rem;
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--card-border);
+  /* Parked off-screen rather than display:none so it can slide in. */
+  transform: translateY(-100%);
+  transition: transform 0.25s ease;
+  pointer-events: none;
+}
+
+.live-bar.visible { transform: translateY(0); }
+
+.live-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.live-value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* A short flash so a changed figure registers even though the bar itself
+   never moves. */
+@keyframes live-bump {
+  from { opacity: 0.4; }
+  to   { opacity: 1; }
+}
+
+.live-value.bump { animation: live-bump 0.3s ease-out; }
+
+/* The side-by-side layout keeps the result on screen already. */
+@media (min-width: 821px) {
+  .live-bar { display: none; }
+}
+
 /* ── Header ─────────────────────────────────────────────────── */
 
 header {

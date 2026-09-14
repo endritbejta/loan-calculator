@@ -13,6 +13,10 @@ Live: https://endrits-loan-calculator.netlify.app/
 - **Side-by-side layout on desktop** — inputs left, results right, sized to fit
   without scrolling. Stacks to a single column below 820px.
 - **Live calculation** — results update as you type, no button press.
+- **Live readout on narrow screens** — in the stacked layout the result sits
+  below the inputs and behind the keyboard, so an edit appears to do nothing.
+  A sticky bar shows the payment while the real figure is off-screen, and
+  disappears once you can see it.
 - **Loan type presets** — Kredi Personale, Konsumuese, Banesore, Automjet,
   Biznes. Each seeds a typical amount and term.
 - **Amortization schedule** — full month-by-month breakdown in a modal, with
@@ -40,6 +44,23 @@ this app claims to be live bank data, because it isn't.
 
 If the CBK ever exposes an API, the link block in `index.html` and
 `updateBqkHint()` in `script.js` are the only places that would need to change.
+
+## Why the live readout doesn't use IntersectionObserver
+
+The obvious way to show the bar "only when the result is off-screen" is an
+IntersectionObserver on the result. It doesn't work for the case that matters.
+
+An on-screen keyboard shrinks the **visual** viewport but leaves the **layout**
+viewport untouched. IntersectionObserver measures against the layout viewport,
+so with the keyboard open it still reports the result as comfortably on screen
+while the keyboard is sitting on top of it — precisely when you are typing and
+need the readout.
+
+So visibility is computed from `window.visualViewport` (its `offsetTop` and
+`height`) against the result's rect, recomputed on scroll, resize, visual
+viewport changes, and input focus/blur. A result counts as visible only when
+more than half of it is inside the visible area; a sliver peeking out doesn't
+count.
 
 ## Variable rates: scenarios, not forecasts
 

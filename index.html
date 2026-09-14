@@ -13,6 +13,14 @@
 <body>
     <div class="background-glob"></div>
 
+    <!-- Live readout for the stacked layout: on a phone the result sits below
+         the inputs and off-screen behind the keyboard, so edits appear to do
+         nothing. Shown only while the real figure is out of view. -->
+    <div class="live-bar" id="live-bar" aria-hidden="true">
+        <span class="live-label" data-i18n="monthly">Kësti Mujor</span>
+        <span class="live-value" id="live-value">€0.00</span>
+    </div>
+
     <div class="container">
         <div class="lang-bar">
             <div class="lang-switch" id="lang-switch" role="radiogroup" aria-label="Gjuha / Language">
