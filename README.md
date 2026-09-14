@@ -15,8 +15,8 @@ Live: https://endrits-loan-calculator.netlify.app/
 - **Live calculation** — results update as you type, no button press.
 - **Live readout on narrow screens** — in the stacked layout the result sits
   below the inputs and behind the keyboard, so an edit appears to do nothing.
-  A sticky bar shows the payment while the real figure is off-screen, and
-  disappears once you can see it.
+  A fixed bar carries the payment at the top of the screen at all times, and
+  counts up when it changes.
 - **Loan type presets** — Kredi Personale, Konsumuese, Banesore, Automjet,
   Biznes. Each seeds a typical amount and term.
 - **Amortization schedule** — full month-by-month breakdown in a modal, with
@@ -61,27 +61,20 @@ qlmanage -t -s 180 -o /tmp /tmp/touch.svg
 sips -s format png /tmp/touch.svg.png --out apple-touch-icon.png
 ```
 
-## Why the live readout doesn't use IntersectionObserver
+## The live readout
 
-The obvious way to show the bar "only when the result is off-screen" is an
-IntersectionObserver on the result. It doesn't work for the case that matters.
+In the stacked layout the result sits below the inputs and, with a keyboard
+open, off-screen — so editing an amount looks like it does nothing. A fixed
+bar carries the payment at the top of the screen instead.
 
-An on-screen keyboard shrinks the **visual** viewport but leaves the **layout**
-viewport untouched. IntersectionObserver measures against the layout viewport,
-so with the keyboard open it still reports the result as comfortably on screen
-while the keyboard is sitting on top of it — precisely when you are typing and
-need the readout.
+It is always visible rather than appearing and disappearing: a readout that
+comes and goes is itself a distraction, and the figure is cheap to keep on
+screen. `body` gets matching top padding below 821px so nothing sits behind it.
 
-So visibility is computed from `window.visualViewport` (its `offsetTop` and
-`height`) against the payment figure's rect, recomputed on scroll, resize,
-visual viewport changes, and input focus/blur.
-
-The bar stays up until the figure is **entirely** readable — a partially
-cut-off number still keeps it visible. The readable area also starts below the
-bar's own height, so the figure can't slide under the bar and still count as
-on screen. The bar is parked off-screen with a transform rather than
-`display: none`, so its height is constant whether shown or hidden and the two
-can't oscillate.
+The figure counts up rather than snapping, since the movement is what catches
+the eye. `animate()` skips the count-up when `document.hidden` — browsers
+suspend rAF in a background tab, so an animation started there would never
+paint and would leave the number stale until the next edit.
 
 ## Variable rates: scenarios, not forecasts
 

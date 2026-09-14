@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const flankDownEl = document.getElementById("flank-down");
   const flankUpEl = document.getElementById("flank-up");
   const flankNoteEl = document.getElementById("flank-note");
-  const liveBar = document.getElementById("live-bar");
   const liveValueEl = document.getElementById("live-value");
 
   const scheduleBtn = document.getElementById("schedule-btn");
@@ -121,7 +120,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // rather than as the range it actually is.
   const SHOCKS = [1, 1.5, 2];
 
-  let syncLiveBar = null;
   let lang = localStorage.getItem("lang") === "en" ? "en" : "sq";
   let rateType = "fikse";
   let schedule = [];
@@ -262,7 +260,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     renderFlanks(amount, rate, months);
     schedule = buildSchedule(amount, rate, months, monthly);
-    if (syncLiveBar) syncLiveBar();
   };
 
   /* ── Language ──────────────────────────────────────────────── */
@@ -366,45 +363,6 @@ document.addEventListener("DOMContentLoaded", () => {
     applyLanguage();
   });
 
-  // Show the readout only while the real figure is off-screen, so it never
-  // duplicates something already in front of you.
-  //
-  // This deliberately uses visualViewport rather than IntersectionObserver:
-  // an open keyboard shrinks the *visual* viewport but leaves the layout
-  // viewport untouched, so an observer still reports the result as on-screen
-  // while the keyboard is covering it — which is the exact moment the readout
-  // is needed.
-  const vv = window.visualViewport;
-
-  const resultOnScreen = () => {
-    const r = monthlyPaymentEl.getBoundingClientRect();
-    // The bar is fixed over the top of the page, so the readable area starts
-    // below it — otherwise the figure could sit behind the bar and still
-    // count as visible.
-    const top = (vv ? vv.offsetTop : 0) + liveBar.offsetHeight;
-    const bottom = vv ? vv.offsetTop + vv.height : window.innerHeight;
-    // The whole figure has to be readable, not merely peeking into view.
-    return r.top >= top - 1 && r.bottom <= bottom + 1;
-  };
-
-  syncLiveBar = () => {
-    liveBar.classList.toggle("visible", !resultOnScreen());
-  };
-
-  ["scroll", "resize"].forEach((e) =>
-    window.addEventListener(e, syncLiveBar, { passive: true })
-  );
-  if (vv) {
-    ["resize", "scroll"].forEach((e) =>
-      vv.addEventListener(e, syncLiveBar, { passive: true })
-    );
-  }
-  // The keyboard animates in, so re-check once it has settled.
-  [amountInput, rateInput, monthsInput].forEach((el) => {
-    el.addEventListener("focus", () => setTimeout(syncLiveBar, 350));
-    el.addEventListener("blur", () => setTimeout(syncLiveBar, 350));
-  });
-
   scheduleBtn.addEventListener("click", openModal);
   csvBtn.addEventListener("click", downloadCsv);
   scheduleModal.addEventListener("click", (e) => {
@@ -415,5 +373,4 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   applyLanguage();
-  syncLiveBar();
 });
