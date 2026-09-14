@@ -449,7 +449,6 @@ input.input-error { border-color: var(--danger); }
 .bqk {
   margin-top: auto;
   padding-top: 1rem;
-  border-top: 1px solid var(--card-border);
 }
 
 /* Reads as a link, not a button — it leaves the page, and a filled control
