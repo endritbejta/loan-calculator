@@ -12,8 +12,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const splitPrincipalEl = document.getElementById("split-principal");
   const splitInterestEl = document.getElementById("split-interest");
   const bqkFiltersEl = document.getElementById("bqk-filters");
-  const rateRiskEl = document.getElementById("rate-risk");
-  const riskGridEl = document.getElementById("risk-grid");
+  const flankDownEl = document.getElementById("flank-down");
+  const flankUpEl = document.getElementById("flank-up");
+  const flankNoteEl = document.getElementById("flank-note");
 
   const scheduleBtn = document.getElementById("schedule-btn");
   const scheduleModal = document.getElementById("schedule-modal");
@@ -38,10 +39,11 @@ document.addEventListener("DOMContentLoaded", () => {
     biznes:     { label: "Kredi për Biznes",    amount: 30000, months: 60 },
   };
 
-  // Rate shocks in percentage points. These are illustrative scenarios, not a
-  // forecast: EURIBOR's future path is not predictable, and a tool that implied
-  // otherwise would be worse than one that just shows the exposure.
-  const SHOCKS = [1, 2, 3];
+  // Rate moves in percentage points, shown in both directions: a variable rate
+  // can fall as easily as rise, and showing only rises reads as a warning
+  // rather than as the range it actually is. Scenarios, not a forecast —
+  // EURIBOR's path is not predictable to any useful accuracy.
+  const SHOCKS = [1, 1.5, 2];
 
   let rateType = "fikse";
   let schedule = [];
@@ -121,23 +123,25 @@ document.addEventListener("DOMContentLoaded", () => {
     bqkFiltersEl.textContent = `${label} · ${band} · ${norm}`;
   };
 
-  const renderRateRisk = (amount, rate, months, baseMonthly) => {
+  const renderFlanks = (amount, rate, months) => {
     const visible = rateType === "variabile";
-    rateRiskEl.classList.toggle("hidden", !visible);
+    flankNoteEl.classList.toggle("hidden", !visible);
+    flankDownEl.innerHTML = "";
+    flankUpEl.innerHTML = "";
     if (!visible) return;
 
-    riskGridEl.innerHTML = "";
-    SHOCKS.forEach((shock) => {
-      const monthly = payment(amount, rate + shock, months);
-      const extra = (monthly - baseMonthly) * months;
+    const row = (label, value) => {
+      const el = document.createElement("span");
+      el.className = "flank-row";
+      el.innerHTML = `<i class="pt">${label}</i><b class="amt">${euro.format(value)}</b>`;
+      return el;
+    };
 
-      const cell = document.createElement("div");
-      cell.className = "risk-cell";
-      cell.innerHTML =
-        `<span class="shock">+${shock} pt</span>` +
-        `<span class="pay">${euro.format(monthly)}</span>` +
-        `<span class="delta">+${euro.format(extra)} total</span>`;
-      riskGridEl.appendChild(cell);
+    SHOCKS.forEach((shock) => {
+      // A rate cannot go below zero, so deep cuts flatten rather than invert.
+      const down = Math.max(0, rate - shock);
+      flankDownEl.appendChild(row(`−${shock}`, payment(amount, down, months)));
+      flankUpEl.appendChild(row(`+${shock}`, payment(amount, rate + shock, months)));
     });
   };
 
@@ -160,7 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
     splitPrincipalEl.style.width = `${100 - interestShare}%`;
     splitInterestEl.style.width = `${interestShare}%`;
 
-    renderRateRisk(amount, rate, months, monthly);
+    renderFlanks(amount, rate, months);
     schedule = buildSchedule(amount, rate, months, monthly);
   };
 

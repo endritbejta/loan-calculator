@@ -40,8 +40,14 @@ If the CBK ever exposes an API, the link block in `index.html` and
 
 ## Variable rates: scenarios, not forecasts
 
-Selecting **Variabile** shows what the payment becomes if the rate rises by 1,
-2 or 3 percentage points, with the extra total cost alongside.
+Selecting **Variabile** flanks the monthly payment with what it becomes if the
+rate moves by 1, 1.5 or 2 percentage points — cuts on the left, rises on the
+right.
+
+Both directions are shown on purpose. An earlier version listed only rises,
+below the payment and with the extra *total* cost alongside; sitting under the
+monthly figures those totals read as part of the payment, and showing only the
+downside framed a two-sided range as a warning.
 
 These are deliberately scenarios rather than a prediction. A variable rate in
 the eurozone tracks EURIBOR plus a fixed bank margin, and EURIBOR's future

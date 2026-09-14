@@ -249,7 +249,63 @@ input.input-error { border-color: var(--danger); }
 
 /* ── Results ────────────────────────────────────────────────── */
 
-.headline { text-align: center; margin-bottom: 1.25rem; }
+.headline { text-align: center; margin-bottom: 1.1rem; }
+
+/* Number stays optically centred whether or not the flanks are populated,
+   so toggling rate type doesn't shift the layout. */
+.headline-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.6rem;
+  /* Reserve the flanks' height so toggling rate type doesn't nudge the
+     number up and down. */
+  min-height: 3.5rem;
+}
+
+.flank {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  /* Without this the 1fr tracks inherit a min-content floor from the rows,
+     so the side columns end up unequal and the number drifts off centre. */
+  min-width: 0;
+}
+
+#flank-down { align-items: flex-start; }
+#flank-up   { align-items: flex-end; }
+
+.flank-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25;
+}
+
+.flank-row .pt {
+  font-size: 0.68rem;
+  font-style: normal;
+  color: var(--text-muted);
+  min-width: 2.4rem;
+}
+
+#flank-up .pt { text-align: right; order: 2; }
+
+.flank-row .amt {
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.flank-note {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-style: italic;
+  opacity: 0.8;
+}
 
 .headline .label {
   display: block;
@@ -317,63 +373,6 @@ input.input-error { border-color: var(--danger); }
 .detail-item .value {
   font-size: 1.1rem;
   font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-/* ── Variable rate stress strip ─────────────────────────────── */
-
-.rate-risk {
-  border: 1px solid rgba(245, 158, 11, 0.28);
-  background: rgba(245, 158, 11, 0.07);
-  border-radius: 12px;
-  padding: 0.7rem 0.8rem;
-  margin-bottom: 0.25rem;
-}
-
-.risk-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.5rem;
-  margin-bottom: 0.55rem;
-  font-size: 0.78rem;
-  color: var(--text-main);
-  font-weight: 500;
-}
-
-.risk-note {
-  color: var(--text-muted);
-  font-size: 0.68rem;
-  font-weight: 400;
-  font-style: italic;
-}
-
-.risk-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.4rem;
-}
-
-.risk-cell { text-align: center; }
-
-.risk-cell .shock {
-  display: block;
-  font-size: 0.68rem;
-  color: var(--interest);
-  margin-bottom: 0.1rem;
-}
-
-.risk-cell .pay {
-  display: block;
-  font-size: 0.85rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-.risk-cell .delta {
-  display: block;
-  font-size: 0.66rem;
-  color: var(--text-muted);
   font-variant-numeric: tabular-nums;
 }
 

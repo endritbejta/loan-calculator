@@ -79,7 +79,12 @@
             <section class="panel panel-results" aria-live="polite">
                 <div class="headline">
                     <span class="label">Monthly Payment</span>
-                    <span class="value" id="monthly-payment">€0.00</span>
+                    <div class="headline-row">
+                        <div class="flank" id="flank-down" aria-hidden="true"></div>
+                        <span class="value" id="monthly-payment">€0.00</span>
+                        <div class="flank" id="flank-up" aria-hidden="true"></div>
+                    </div>
+                    <span class="flank-note hidden" id="flank-note">if the rate moves · scenario, not a forecast</span>
                 </div>
 
                 <div class="split-bar" aria-hidden="true">
@@ -100,16 +105,6 @@
                         <span class="label">Total Interest</span>
                         <span class="value" id="total-interest">€0.00</span>
                     </div>
-                </div>
-
-                <!-- Only shown for variable rates. Deliberately scenarios rather
-                     than a forecast — see the note in the README. -->
-                <div class="rate-risk hidden" id="rate-risk">
-                    <div class="risk-head">
-                        <span>If the rate rises</span>
-                        <span class="risk-note">scenario, not a forecast</span>
-                    </div>
-                    <div class="risk-grid" id="risk-grid"></div>
                 </div>
 
                 <!-- Rates are not fetched: BQK blocks automated access, so we link
