@@ -68,7 +68,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.55rem 1.25rem;
+  padding: 0.7rem 1.35rem;
   background: rgba(15, 23, 42, 0.94);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -82,25 +82,17 @@ body {
 .live-bar.visible { transform: translateY(0); }
 
 .live-label {
-  font-size: 0.78rem;
+  font-size: 0.85rem;
   color: var(--text-muted);
 }
 
 .live-value {
-  font-size: 1.05rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--accent);
   font-variant-numeric: tabular-nums;
+  line-height: 1.15;
 }
-
-/* A short flash so a changed figure registers even though the bar itself
-   never moves. */
-@keyframes live-bump {
-  from { opacity: 0.4; }
-  to   { opacity: 1; }
-}
-
-.live-value.bump { animation: live-bump 0.3s ease-out; }
 
 /* The side-by-side layout keeps the result on screen already. */
 @media (min-width: 821px) {

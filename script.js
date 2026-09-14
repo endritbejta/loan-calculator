@@ -187,7 +187,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const animate = (el, to, duration = 550) => {
     const from = parseFloat(el.dataset.value || 0);
     el.dataset.value = to;
-    if (Math.abs(to - from) < 0.01) {
+    // Browsers suspend rAF in a hidden tab, so an animation started there
+    // would never paint and the figure would sit stale until the next edit.
+    // Nothing is watching anyway, so just land on the value.
+    if (document.hidden || Math.abs(to - from) < 0.01) {
       el.textContent = euro.format(to);
       return;
     }
@@ -249,15 +252,9 @@ document.addEventListener("DOMContentLoaded", () => {
     animate(totalPaymentEl, total);
     animate(totalInterestEl, interest);
 
-    // Set directly rather than counting up: this is a live readout while
-    // typing, so it should land on the figure immediately.
-    const formatted = euro.format(monthly);
-    if (liveValueEl.textContent !== formatted) {
-      liveValueEl.textContent = formatted;
-      liveValueEl.classList.remove("bump");
-      void liveValueEl.offsetWidth; // restart the animation
-      liveValueEl.classList.add("bump");
-    }
+    // Counts up like the main figure rather than snapping: the movement is
+    // what catches the eye, which is the whole point of the bar.
+    animate(liveValueEl, monthly);
 
     const interestShare = total > 0 ? (interest / total) * 100 : 0;
     splitPrincipalEl.style.width = `${100 - interestShare}%`;

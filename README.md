@@ -45,6 +45,22 @@ this app claims to be live bank data, because it isn't.
 If the CBK ever exposes an API, the link block in `index.html` and
 `updateBqkHint()` in `script.js` are the only places that would need to change.
 
+## Icons
+
+`favicon.svg` is drawn as paths rather than a `<text>` element — a favicon
+renders outside the page, where the site's webfont isn't guaranteed to have
+loaded. `apple-touch-icon.png` is the same mark rendered edge-to-edge without
+the rounded corners, because iOS applies its own corner mask and would fill
+transparent corners with black.
+
+Regenerate the touch icon from the SVG with:
+
+```bash
+sed 's/rx="7.5"//' favicon.svg > /tmp/touch.svg
+qlmanage -t -s 180 -o /tmp /tmp/touch.svg
+sips -s format png /tmp/touch.svg.png --out apple-touch-icon.png
+```
+
 ## Why the live readout doesn't use IntersectionObserver
 
 The obvious way to show the bar "only when the result is off-screen" is an
